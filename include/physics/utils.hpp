@@ -8,7 +8,7 @@
 namespace phe::physics::collision {
 
 struct CollisionInfo {
-    bool isColliding;
+    bool isColliding = false;
     glm::vec3 mpa;          // Minimum Penetration Axis
     float penetrationDepth; // How deep a rigid body is inside another
 };

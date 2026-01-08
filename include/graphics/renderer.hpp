@@ -4,6 +4,9 @@
 #include "graphics/shader.hpp"
 #include "physics/rigidbody.hpp"
 
+namespace phe::physics {
+	class PhysicsWorld;
+}
 namespace phe::graphics {
     struct Renderer {
         Shader* shader = nullptr;
@@ -17,10 +20,17 @@ namespace phe::graphics {
     void renderClear(float r, float g, float b, float a);
 
     /**
-     * Draws the rigid body in world space, feeding it's transform's model 
+     * Draws the rigid body in world space, feeding its transformed model
      * matrix to the shader program.
      */
     void drawRigidBody(physics::RigidBody& rb, Renderer& r);
+
+    /**
+     * Draw all rigid bodies in given physics world using the
+     * supplied renderer.
+     */
+    void drawPhysicsWorld(physics::PhysicsWorld& pw, Renderer& r);
+
 }
 
 #endif

@@ -1,11 +1,12 @@
 #ifndef RIGIDBODY_HPP
 #define RIGIDBODY_HPP
 
+#include <functional>
 #include <glm/fwd.hpp>
 #include <glm/glm.hpp>
 
-#include "graphics/mesh.hpp"
-#include "math_utils/transform.hpp"
+#include "mesh.hpp"
+#include "transform.hpp"
 
 namespace phe::physics {
 
@@ -25,11 +26,13 @@ struct RigidBody {
     float mass = 1.0f;
     bool isDynamic = false;
 
-    graphics::Mesh mesh;
+    Mesh mesh;
 
-    bool operator!=(const RigidBody& other) {
+    bool operator!=(const RigidBody& other) const {
         return !(this->trans == other.trans);
     }
+
+	std::function<void(RigidBody&)> on_collision = [] (RigidBody& other) {};
 
     RigidBody(glm::vec3 size, glm::vec3 rgb, float mass, bool isDynamic);
     ~RigidBody();

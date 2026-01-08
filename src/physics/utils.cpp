@@ -1,5 +1,5 @@
-#include "physics/collisionUtils.hpp"
-#include "graphics/mesh.hpp"
+#include "physics/utils.hpp"
+#include "physics/mesh.hpp"
 #include "physics/rigidbody.hpp"
 #include <algorithm>
 #include <cfloat>
@@ -56,7 +56,11 @@ std::vector<glm::vec3> computeCubeEdges(const RigidBody& rb) {
 
 CollisionInfo areColliding(RigidBody& a, RigidBody& b) {
     std::vector<glm::vec3> axes;    
-    CollisionInfo collisionInfo;
+    CollisionInfo collisionInfo {};
+
+	if (!a.isDynamic && !b.isDynamic) {
+		return collisionInfo;
+	}
 
     auto normalsA = computeCubeNormals(a);
     auto normalsB = computeCubeNormals(b);
@@ -81,18 +85,18 @@ CollisionInfo areColliding(RigidBody& a, RigidBody& b) {
     float lastPenetrationDepth = FLT_MAX;
 
     for (auto& axis : axes) {
-        // Find minA, maxA, minB and maxB to check if their projection ovelaps
+        // Find minA, maxA, minB and maxB to check if their projection overlaps
         float minA = FLT_MAX, maxA = -FLT_MAX;
-        for (int i = 0; i < graphics::getNumVerts(a.mesh); ++i) {
-            glm::vec3 vA = graphics::getVertex(a.mesh, a.trans, i);
+        for (int i = 0; i < physics::getNumVerts(a.mesh); ++i) {
+            glm::vec3 vA = physics::getVertex(a.mesh, a.trans, i);
             float projectionA = projectOntoAxis(vA, axis);
             minA = std::min(minA, projectionA);
             maxA = std::max(maxA, projectionA);
         }
 
         float minB = FLT_MAX, maxB = -FLT_MAX;
-        for (int i = 0; i < graphics::getNumVerts(b.mesh); ++i) {
-            glm::vec3 vA = graphics::getVertex(b.mesh, b.trans, i);
+        for (int i = 0; i < physics::getNumVerts(b.mesh); ++i) {
+            glm::vec3 vA = physics::getVertex(b.mesh, b.trans, i);
             float projectionB = projectOntoAxis(vA, axis);
             minB = std::min(minB, projectionB);
             maxB = std::max(maxB, projectionB);

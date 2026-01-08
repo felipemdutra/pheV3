@@ -12,10 +12,9 @@ class Shader {
         unsigned int compileShader(unsigned int type, const char *src) const;
 
         void checkLinkError(unsigned int shaderProgram) const;
-        std::string loadShader(const std::string& shaderPath) const;
 
     public:
-        Shader(const char* vertPath, const char* fragPath);
+        Shader(const char* vertexCode, const char* fragmentCode);
         ~Shader();
 
         void use() const;

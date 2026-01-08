@@ -3,7 +3,6 @@
 
 #include <vector>
 
-#include "graphics/renderer.hpp"
 #include "physics/collision.hpp"
 #include "physics/rigidbody.hpp"
 
@@ -21,9 +20,11 @@ private:
     collision::GridPartition gp;
 
 public:
-    void update(float dt, graphics::Renderer& r);
+    void update(float dt);
 
     void addRigidBody(RigidBody* rb);
+
+	const std::vector<RigidBody*>& getRigidBodies() const;
 
     PhysicsWorld();
 };

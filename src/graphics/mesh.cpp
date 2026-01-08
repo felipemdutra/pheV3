@@ -3,15 +3,11 @@
 #include <glm/gtc/quaternion.hpp>
 
 #include "graphics/mesh.hpp"
-#include "math_utils/transform.hpp"
+#include "../../include/physics/transform.hpp"
 
 namespace phe::graphics {
 
-Mesh createMesh(std::vector<float> vertices, std::vector<unsigned int> indices) {
-    Mesh m;
-    m.vertices = vertices;
-    m.indices = indices;
-
+void prepareMeshRenderContext(physics::Mesh& m) {
     glGenVertexArrays(1, &m.vao);
     glBindVertexArray(m.vao);
 
@@ -38,11 +34,13 @@ Mesh createMesh(std::vector<float> vertices, std::vector<unsigned int> indices) 
     glEnableVertexAttribArray(1);
 
     glBindVertexArray(0);
-
-    return m;
 }
 
-void destroyMesh(Mesh &m) {
+void destroyMesh(physics::Mesh& m) {
+	if (!m.hasRenderContext) {
+		return;
+	}
+
     glDeleteVertexArrays(1, &m.vao);
     glDeleteBuffers(1, &m.vbo);
     glDeleteBuffers(1, &m.vbo);
@@ -51,91 +49,14 @@ void destroyMesh(Mesh &m) {
     m.indices.clear();
 }
 
-void drawMesh(Mesh &m) {
+void drawMesh(physics::Mesh& m) {
+	if (!m.hasRenderContext) {
+		prepareMeshRenderContext(m);
+	}
+
     glBindVertexArray(m.vao);
     glDrawElements(GL_TRIANGLES, m.indices.size(), GL_UNSIGNED_INT, nullptr);
     glBindVertexArray(0);
-}
-
-/**
- * @param size The size of the cube.
- *
- * @param r Red value of the cube.
- * @param g Green value of the cube.
- * @param b Blue value of the cube.
- */
-Mesh createCubeMesh(glm::vec3 size, glm::vec3 rgb) {
-    float hx = size.x * 0.5;
-    float hy = size.y * 0.5;
-    float hz = size.z * 0.5;
-
-    float r = rgb.x;
-    float g = rgb.y;
-    float b = rgb.b;
-
-    std::vector<float> cubeVertices = {
-        -hx, -hy,  hz,  r, g, b,
-         hx, -hy,  hz,  r, g, b,
-         hx,  hy,  hz,  r, g, b,
-        -hx,  hy,  hz,  r, g, b,
-
-        -hx, -hy, -hz,  r, g, b,
-        -hx,  hy, -hz,  r, g, b,
-         hx,  hy, -hz,  r, g, b,
-         hx, -hy, -hz,  r, g, b,
-
-        -hx, -hy, -hz,  r, g, b,
-        -hx, -hy,  hz,  r, g, b,
-        -hx,  hy,  hz,  r, g, b,
-        -hx,  hy, -hz,  r, g, b,
-
-         hx, -hy, -hz,  r, g, b,
-         hx,  hy, -hz,  r, g, b,
-         hx,  hy,  hz,  r, g, b,
-         hx, -hy,  hz,  r, g, b,
-
-        -hx,  hy, -hz,  r, g, b,
-        -hx,  hy,  hz,  r, g, b,
-         hx,  hy,  hz,  r, g, b,
-         hx,  hy, -hz,  r, g, b,
-
-         hx, -hy, -hz,  r, g, b,
-         hx, -hy,  hz,  r, g, b,
-        -hx, -hy,  hz,  r, g, b,
-        -hx, -hy, -hz,  r, g, b,
-    };
-
-
-    std::vector<unsigned int> cubeIndices = {
-        0, 1, 2, 2, 3, 0,
-        4, 5, 6, 6, 7, 4,
-        8, 9, 10, 10, 11, 8,
-        12, 13, 14, 14, 15, 12,
-        16, 17, 18, 18, 19, 16,
-        20, 21, 22, 22, 23, 20
-    };
-
-    return createMesh(cubeVertices, cubeIndices);
-}
-
-int getNumVerts(Mesh& m) {
-    return m.vertices.size() / 6;
-}
-
-glm::vec3 getVertex(Mesh& m, math::Transform trans, int i) {
-    if (i > m.vertices.size() || i < 0) {
-        throw std::out_of_range("Vertex index is out of range");
-    }
-
-    int vertexStart = i * 6;
-
-    glm::vec3 localVertex(
-        m.vertices[vertexStart],
-        m.vertices[vertexStart + 1],
-        m.vertices[vertexStart + 2]
-    );
-
-    return glm::vec3(trans.rotation * glm::vec4(localVertex, 1.0f)) + trans.translation;
 }
 
 } // namespace phe::graphics

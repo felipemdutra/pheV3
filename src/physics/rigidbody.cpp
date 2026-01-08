@@ -28,12 +28,12 @@ namespace phe::physics {
     RigidBody::RigidBody(glm::vec3 size, glm::vec3 rgb, float mass, bool isDynamic) 
          : size(size), mass(mass), isDynamic(isDynamic) {
 
-    mesh = graphics::createCubeMesh(size, rgb);
+    mesh = physics::createCubeMesh(size, rgb);
     inertiaTensor = calculateInertiaTensor(mass, size);
 }
 
 RigidBody::~RigidBody() {
-    graphics::destroyMesh(mesh);
+    //graphics::destroyMesh(mesh);
 }
 
 void applyLinearForce(RigidBody &rb, glm::vec3 f) {
@@ -60,6 +60,7 @@ void applyForce(RigidBody& rb, glm::vec3 f, glm::vec3 r) {
 }
 
 void applyImpulse(RigidBody &rb, glm::vec3 i, glm::vec3 r) {
+    if (!rb.isDynamic) return;
     applyLinearImpulse(rb, i);
     applyAngularImpulse(rb, i, r);
 }

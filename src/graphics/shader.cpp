@@ -4,12 +4,10 @@
 #include <iostream>
 #include "graphics/shader.hpp"
 
-Shader::Shader(const char* vertPath, const char* fragPath) {
-    std::string vertexCode = loadShader(vertPath);
-    std::string fragmentCode = loadShader(fragPath);
+Shader::Shader(const char* vertexCode, const char* fragmentCode) {
 
-    unsigned int vertexShader = compileShader(GL_VERTEX_SHADER, vertexCode.c_str());
-    unsigned int fragmentShader = compileShader(GL_FRAGMENT_SHADER, fragmentCode.c_str());
+    unsigned int vertexShader = compileShader(GL_VERTEX_SHADER, vertexCode);
+    unsigned int fragmentShader = compileShader(GL_FRAGMENT_SHADER, fragmentCode);
 
     id = glCreateProgram();
     glAttachShader(id, vertexShader);
@@ -48,21 +46,6 @@ unsigned int Shader::compileShader(unsigned int type, const char *src) const {
     }
 
     return shader;
-}
-
-std::string Shader::loadShader(const std::string& shaderPath) const {
-    std::ifstream shaderFile;
-    shaderFile.exceptions(std::ifstream::failbit | std::ifstream::badbit);
-    try {
-        shaderFile.open(shaderPath);
-        std::stringstream shaderStream;
-        shaderStream << shaderFile.rdbuf();
-        shaderFile.close();
-        return shaderStream.str();
-    } catch (std::ifstream::failure& e) {
-        std::cerr << "ERROR::SHADER::FILE_NOT_SUCCESSFULLY_READ: " << shaderPath << std::endl;
-        return "";
-    }
 }
 
 void Shader::checkLinkError(unsigned int shaderProgram) const {

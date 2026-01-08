@@ -1,9 +1,7 @@
 #include "graphics/renderer.hpp"
 #include "graphics/window.hpp"
 #include "physics/rigidbody.hpp"
-#include <glm/ext/quaternion_trigonometric.hpp>
 #include <GLFW/glfw3.h>
-#include <iostream>
 
 #define WIDTH 900 
 #define HEIGHT 700 
@@ -11,10 +9,8 @@
 using namespace phe;
 using namespace glm;
 
-float lastTime = 0.0f;
-
 int main() {
-    auto window = graphics::createWindow(WIDTH, HEIGHT, "pheV3");
+    auto window = graphics::createWindow(WIDTH, HEIGHT, "Single Body Test");
     if (!window) {
         return 1;
     }
@@ -33,6 +29,7 @@ int main() {
 
     bool isTrue = false;
     float startTime = glfwGetTime();
+	float lastTime = startTime;
 
     while (!graphics::shouldClose(window)) {
         float currentTime = static_cast<float>(glfwGetTime());
